@@ -102,7 +102,7 @@ if prompt := st.chat_input(L["input_placeholder"]):
     # Call Gemini 1.5 Flash
     with st.chat_message("assistant"):
         try:
-            model = genai.GenerativeModel("gemini-1.5-flash-latest")
+            model = genai.GenerativeModel("gemini-1.5-flash")
             
             # Construct Context
             context = f"{L['system_instruction']} User Age: {age}. Traditional remedies enabled: {remedy_on}."
