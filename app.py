@@ -2,6 +2,14 @@ import urllib.parse
 import streamlit as st
 import google.generativeai as genai
 import os
+from streamlit_mic_recorder import mic_recorder
+
+# Add a voice recorder button in the sidebar or main page
+audio = mic_recorder(
+    start_prompt="🎤 Start Speaking",
+    stop_prompt="🛑 Stop Recording",
+    key='recorder'
+)
 
 # --- 1. CONFIGURATION & SECURITY ---
 # Securely fetch API Key (Cloud Run sets this as an environment variable)
@@ -145,3 +153,22 @@ if st.button("📋 Generate Summary for Doctor"):
     
     #Professional Action Button
     st.link_button("📲 Send to Doctor via WhatsApp", whatsapp_url, type="primary", use_container_width=True)
+
+# --- 7. VOICE MODE ---
+if audio:
+    # 'audio' contains the raw bytes of the recording
+    audio_bytes = audio['bytes']
+    
+    # 1. Send the audio bytes to Gemini
+    # Gemini can "hear" the audio and understand the language automatically
+    model = genai.GenerativeModel('gemini-2.5-flash')
+    
+    # We pass the system prompt + the audio file
+    response = model.generate_content([
+        st.session_state.system_prompt,
+        {"mime_type": "audio/wav", "data": audio_bytes}
+    ])
+    
+    # 2. Display the AI's response as if it were a text chat
+    st.session_state.messages.append({"role": "assistant", "content": response.text})
+    st.rerun()
