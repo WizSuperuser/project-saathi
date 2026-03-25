@@ -140,7 +140,7 @@ if st.button("📋 Generate Summary for Doctor"):
     st.code(summary_text)
     
     #Create a WhatsApp Link
-    ncoded_text = urllib.parse.quote(summary_text)
+    encoded_text = urllib.parse.quote(summary_text)
     whatsapp_url = f"https://wa.me/?text={encoded_text}"
     
     #Professional Action Button
