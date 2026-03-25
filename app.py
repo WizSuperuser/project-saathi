@@ -1,3 +1,4 @@
+import urllib.parse
 import streamlit as st
 import google.generativeai as genai
 import os
@@ -139,5 +140,8 @@ if st.button("📋 Generate Summary for Doctor"):
     st.code(summary_text)
     
     #Create a WhatsApp Link
-    whatsapp_url = f"https://wa.me/?text={summary_text.replace(' ', '%20')}"
-    st.markdown(f"[📲 Send to Doctor via WhatsApp]({whatsapp_url})")
+    ncoded_text = urllib.parse.quote(summary_text)
+    whatsapp_url = f"https://wa.me/?text={encoded_text}"
+    
+    #Professional Action Button
+    st.link_button("📲 Send to Doctor via WhatsApp", whatsapp_url, type="primary", use_container_width=True)
