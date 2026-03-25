@@ -114,3 +114,30 @@ if prompt := st.chat_input(L["input_placeholder"]):
             
         except Exception as e:
             st.error(f"Error: {e}")
+
+# --- 6. SUMMARY FOR DOCTOR ---
+DOCTOR_SUMMARY_PROMPT = """
+Summarize the above conversation for a medical professional in 3-4 bullet points.
+Include:
+1. Patient Age and Primary Complaint.
+2. Duration of symptoms.
+3. Presence or absence of 'Red Flags' (Chest pain, Jaw pain, Breathlessness on exertion).
+4. Any traditional remedies already tried.
+Keep it strictly clinical and brief.
+"""
+
+if st.button("📋 Generate Summary for Doctor"):
+    # Combine the chat history for context
+    chat_context = "\n".join([f"{m['role']}: {m['content']}" for m in st.session_state.messages])
+    
+    # Call Gemini to summarize
+    model = genai.GenerativeModel('gemini-2.5-flash')
+    summary_response = model.generate_content(f"{chat_context}\n\n{DOCTOR_SUMMARY_PROMPT}")
+    summary_text = summary_response.text
+    
+    st.subheader("Doctor's Note (Ready to Copy)")
+    st.code(summary_text)
+    
+    #Create a WhatsApp Link
+    whatsapp_url = f"https://wa.me/?text={summary_text.replace(' ', '%20')}"
+    st.markdown(f"[📲 Send to Doctor via WhatsApp]({whatsapp_url})")
